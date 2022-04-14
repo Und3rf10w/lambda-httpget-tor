@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 *.dist-info/
 lambda.zip
+outputfile.ext
