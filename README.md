@@ -11,6 +11,20 @@ Some time will be taken for the lambda function to establish the tor circut and 
 
 You may want to look at [qrtt1's lambda-layer-tor](https://github.com/qrtt1/lambda-layer-tor) project
 
+# Usage
+- Package repo as a zip.
+- Upload from `.zip file` in lambda function editor.
+- Adjust function timeout to be at least `1m`. `2m` is recommended. 
+- Add a function url.
+- Request your function url, adding the `url` and `user_agent` parameters
+
+Example:
+```
+GET https://eQuuefakelambdaurlhivohz8yee6dae.lambda-url.us-east-1.on.aws?url={url_you_want_to_request}&user_agent={user_agent_you_want_to_request_as}
+```
+
+- Wait for a response from the lambda function
+
 # Credits
 This project borrows code from:
 
