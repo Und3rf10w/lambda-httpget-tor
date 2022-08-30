@@ -1,4 +1,5 @@
 import requests
+import urllib.parse
 from requests.auth import HTTPBasicAuth
 from time import sleep
 
@@ -27,12 +28,12 @@ def setup_tor_proxy():
     return process
 
 
-def get_url(url="http://ipinfo.io/", user_agent=""):
+def get_url(url, user_agent):
     headers = {
         'User-Agent': user_agent
     }
     proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'}
-    result = requests.get(url, headers=headers, proxies=proxies)
+    result = requests.get(url, headers=headers, proxies=proxies, verify=False)
     return result
 
 
@@ -41,12 +42,13 @@ def lambda_handler(event, context):
     # TODO: Add function to verify that TOR set up successfully
     sleep(20)
     # TODO: refactor this. This is quick and dirty, there are cleaner ways to do this
-    if not event['url']:
-        output = get_url()
-    else:
-        if event['user_agent']:
-            output = get_url(event['url'], event['user_agent'])
-        else:
-            output = get_url(event['url'])
+    if not 'url' in event['queryStringParameters']:
+        event['queryStringParameters']['url'] = "http://ipinfo.io/"
+    if not 'user_agent' in event['queryStringParameters']:
+        event['queryStringParameters']['user_agent'] = ""
+    
+    output = get_url(url=urllib.parse.unquote(event['queryStringParameters']['url']), user_agent=urllib.parse.unquote(event['queryStringParameters']['user_agent']))
     process.terminate()
-    return output.raw
+    return output.text
+
+
