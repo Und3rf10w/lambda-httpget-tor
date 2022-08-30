@@ -19,6 +19,8 @@ def setup_tor_proxy():
         f.write("SOCKSPort 9050\n")
         f.write(f"DataDirectory {data_dir}\n")
 
+    # TODO: Check if `tor` exists and it is executable
+
     tor_path = os.path.join(os.environ["LAMBDA_TASK_ROOT"], "tor")
 
     process = Popen([tor_path, "-f", tmp], cwd=os.path.dirname(data_dir), stdout=PIPE)
@@ -36,6 +38,7 @@ def get_url(url="http://ipinfo.io/", user_agent=""):
 
 def lambda_handler(event, context):
     process = setup_tor_proxy()
+    # TODO: Add function to verify that TOR set up successfully
     sleep(20)
     # TODO: refactor this. This is quick and dirty, there are cleaner ways to do this
     if not event['url']:
