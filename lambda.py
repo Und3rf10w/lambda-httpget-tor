@@ -25,9 +25,9 @@ def setup_tor_proxy():
     return process
 
 
-def get_url(url):
+def get_url(url="http://ipinfo.io/", user_agent=""):
     headers = {
-        'User-Agent': ''
+        'User-Agent': user_agent
     }
     proxies = {'http': 'socks5h://localhost:9050', 'https': 'socks5h://localhost:9050'}
     result = requests.get(url, headers=headers, proxies=proxies)
@@ -37,6 +37,13 @@ def get_url(url):
 def lambda_handler(event, context):
     process = setup_tor_proxy()
     sleep(20)
-    output = get_url("http://ifconfig.me/all")
+    # TODO: refactor this. This is quick and dirty, there are cleaner ways to do this
+    if not event['url']:
+        output = get_url()
+    else:
+        if event['user_agent']:
+            output = get_url(event['url'], event['user_agent'])
+        else:
+            output = get_url(event['url'])
     process.terminate()
-    return output.text
+    return output.raw
